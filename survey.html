@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Survey</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h2>Banking Analytics</h2>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="survey.html">Survey</a>
+        <a href="analytics.html">Analytics</a>
+    </nav>
+</header>
+
+<div class="container">
+
+    <h1 style="text-align:center;">Customer Satisfaction Survey</h1>
+
+    <p style="text-align:center;">
+        Please share your banking experience.
+    </p>
+
+    <form id="surveyForm">
+
+        <label>Customer ID</label>
+        <input type="number" id="customer_id" min="1" required>
+
+        <label>1. Overall satisfaction with your bank?</label>
+        <select class="answer" required>
+            <option value="">Select an answer</option>
+            <option>Very Satisfied</option>
+            <option>Satisfied</option>
+            <option>Neutral</option>
+            <option>Dissatisfied</option>
+            <option>Very Dissatisfied</option>
+        </select>
+
+        <label>2. Satisfaction with staff service?</label>
+        <select class="answer" required>
+            <option value="">Select an answer</option>
+            <option>Very Satisfied</option>
+            <option>Satisfied</option>
+            <option>Neutral</option>
+            <option>Dissatisfied</option>
+            <option>Very Dissatisfied</option>
+        </select>
+
+        <label>3. Satisfaction with online banking?</label>
+        <select class="answer" required>
+            <option value="">Select an answer</option>
+            <option>Very Satisfied</option>
+            <option>Satisfied</option>
+            <option>Neutral</option>
+            <option>Dissatisfied</option>
+            <option>Very Dissatisfied</option>
+        </select>
+
+        <label>4. Satisfaction with transaction speed?</label>
+        <select class="answer" required>
+            <option value="">Select an answer</option>
+            <option>Very Satisfied</option>
+            <option>Satisfied</option>
+            <option>Neutral</option>
+            <option>Dissatisfied</option>
+            <option>Very Dissatisfied</option>
+        </select>
+
+        <label>5. Would you recommend our bank?</label>
+        <select class="answer" required>
+            <option value="">Select an answer</option>
+            <option>Yes</option>
+            <option>No</option>
+        </select>
+
+        <button type="submit">Submit Survey</button>
+
+        <p id="message"></p>
+
+    </form>
+
+</div>
+
+<footer>
+    Banking Survey and Analytics Project
+</footer>
+
+<script>
+document.getElementById("surveyForm").addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const customer_id = Number(
+        document.getElementById("customer_id").value
+    );
+
+    const answers = Array.from(
+        document.querySelectorAll(".answer")
+    ).map(select => select.value);
+
+    const message = document.getElementById("message");
+
+    try {
+        const response = await fetch(
+            "http://127.0.0.1:8000/submit-survey",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    customer_id: customer_id,
+                    answers: answers
+                })
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(JSON.stringify(result));
+        }
+
+        message.style.color = "green";
+        message.textContent = "Survey submitted successfully!";
+
+        document.getElementById("surveyForm").reset();
+
+    } catch (error) {
+        message.style.color = "red";
+        message.textContent = "Submission failed: " + error.message;
+    }
+
+});
+</script>
+
+</body>
+</html>
